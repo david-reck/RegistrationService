@@ -1,11 +1,9 @@
 ﻿namespace iPAS.Services.Registration.API.Infrastructure.Filters
 {
     using Microsoft.AspNetCore.Mvc;
-    using global::Ordering.Domain.Exceptions;
-    using Microsoft.AspNetCore.Hosting;
+     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.eShopOnContainers.Services.Ordering.API.Infrastructure.ActionResults;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using System.Net;

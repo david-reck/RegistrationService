@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.eShopOnContainers.BuildingBlocks.EventBus.Extensions;
 using iPAS.Services.Registration.Domain.Exceptions;
 
 namespace iPAS.Services.Registration.API.Application.Behaviors

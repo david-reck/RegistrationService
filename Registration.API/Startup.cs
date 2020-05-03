@@ -16,6 +16,7 @@ using System.Data.Common;
 using System.IO;
 using System.Reflection;
 using iPAS.Services.Registration.Infrastructure;
+using iPAS.Services.Registration.API.Infrastructure.Filters;
 
 namespace iPAS.Services.Registration.API
 {
@@ -41,10 +42,10 @@ namespace iPAS.Services.Registration.API
                 //.AddHealthChecks(Configuration)
                 .AddCustomDbContext(Configuration)
                 .AddCustomSwagger(Configuration)
-                .AddCustomIntegrations(Configuration)
-                .AddCustomConfiguration(Configuration)
+                //.AddCustomIntegrations(Configuration)
+                .AddCustomConfiguration(Configuration);
                 //.AddEventBus(Configuration)
-                .AddCustomAuthentication(Configuration);
+                //.AddCustomAuthentication(Configuration);
             //configure autofac
 
             var container = new ContainerBuilder();
@@ -272,62 +273,62 @@ namespace iPAS.Services.Registration.API
             return services;
         }
 
-        public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
-                sp => (DbConnection c) => new IntegrationEventLogService(c));
+        //public static IServiceCollection AddCustomIntegrations(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        //    services.AddTransient<IIdentityService, IdentityService>();
+        //    services.AddTransient<Func<DbConnection, IIntegrationEventLogService>>(
+        //        sp => (DbConnection c) => new IntegrationEventLogService(c));
 
-            services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
+        //    services.AddTransient<IOrderingIntegrationEventService, OrderingIntegrationEventService>();
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddSingleton<IServiceBusPersisterConnection>(sp =>
-                {
-                    var logger = sp.GetRequiredService<ILogger<DefaultServiceBusPersisterConnection>>();
+        //    if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+        //    {
+        //        services.AddSingleton<IServiceBusPersisterConnection>(sp =>
+        //        {
+        //            var logger = sp.GetRequiredService<ILogger<DefaultServiceBusPersisterConnection>>();
 
-                    var serviceBusConnectionString = configuration["EventBusConnection"];
-                    var serviceBusConnection = new ServiceBusConnectionStringBuilder(serviceBusConnectionString);
+        //            var serviceBusConnectionString = configuration["EventBusConnection"];
+        //            var serviceBusConnection = new ServiceBusConnectionStringBuilder(serviceBusConnectionString);
 
-                    return new DefaultServiceBusPersisterConnection(serviceBusConnection, logger);
-                });
-            }
-            else
-            {
-                services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
-                {
-                    var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
+        //            return new DefaultServiceBusPersisterConnection(serviceBusConnection, logger);
+        //        });
+        //    }
+        //    else
+        //    {
+        //        services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
+        //        {
+        //            var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
 
 
-                    var factory = new ConnectionFactory()
-                    {
-                        HostName = configuration["EventBusConnection"],
-                        DispatchConsumersAsync = true
-                    };
+        //            var factory = new ConnectionFactory()
+        //            {
+        //                HostName = configuration["EventBusConnection"],
+        //                DispatchConsumersAsync = true
+        //            };
 
-                    if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
-                    {
-                        factory.UserName = configuration["EventBusUserName"];
-                    }
+        //            if (!string.IsNullOrEmpty(configuration["EventBusUserName"]))
+        //            {
+        //                factory.UserName = configuration["EventBusUserName"];
+        //            }
 
-                    if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
-                    {
-                        factory.Password = configuration["EventBusPassword"];
-                    }
+        //            if (!string.IsNullOrEmpty(configuration["EventBusPassword"]))
+        //            {
+        //                factory.Password = configuration["EventBusPassword"];
+        //            }
 
-                    var retryCount = 5;
-                    if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
-                    {
-                        retryCount = int.Parse(configuration["EventBusRetryCount"]);
-                    }
+        //            var retryCount = 5;
+        //            if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+        //            {
+        //                retryCount = int.Parse(configuration["EventBusRetryCount"]);
+        //            }
 
-                    return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
-                });
-            }
+        //            return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
+        //        });
+        //    }
 
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
@@ -354,46 +355,46 @@ namespace iPAS.Services.Registration.API
             return services;
         }
 
-        public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
-        {
-            var subscriptionClientName = configuration["SubscriptionClientName"];
+        //public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    var subscriptionClientName = configuration["SubscriptionClientName"];
 
-            if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
-            {
-                services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
-                {
-                    var serviceBusPersisterConnection = sp.GetRequiredService<IServiceBusPersisterConnection>();
-                    var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
-                    var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
-                    var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+        //    if (configuration.GetValue<bool>("AzureServiceBusEnabled"))
+        //    {
+        //        services.AddSingleton<IEventBus, EventBusServiceBus>(sp =>
+        //        {
+        //            var serviceBusPersisterConnection = sp.GetRequiredService<IServiceBusPersisterConnection>();
+        //            var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+        //            var logger = sp.GetRequiredService<ILogger<EventBusServiceBus>>();
+        //            var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
-                    return new EventBusServiceBus(serviceBusPersisterConnection, logger,
-                        eventBusSubcriptionsManager, subscriptionClientName, iLifetimeScope);
-                });
-            }
-            else
-            {
-                services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
-                {
-                    var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
-                    var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
-                    var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
-                    var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
+        //            return new EventBusServiceBus(serviceBusPersisterConnection, logger,
+        //                eventBusSubcriptionsManager, subscriptionClientName, iLifetimeScope);
+        //        });
+        //    }
+        //    else
+        //    {
+        //        services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
+        //        {
+        //            var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
+        //            var iLifetimeScope = sp.GetRequiredService<ILifetimeScope>();
+        //            var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
+        //            var eventBusSubcriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
 
-                    var retryCount = 5;
-                    if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
-                    {
-                        retryCount = int.Parse(configuration["EventBusRetryCount"]);
-                    }
+        //            var retryCount = 5;
+        //            if (!string.IsNullOrEmpty(configuration["EventBusRetryCount"]))
+        //            {
+        //                retryCount = int.Parse(configuration["EventBusRetryCount"]);
+        //            }
 
-                    return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
-                });
-            }
+        //            return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, iLifetimeScope, eventBusSubcriptionsManager, subscriptionClientName, retryCount);
+        //        });
+        //    }
 
-            services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
+        //    services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
-            return services;
-        }
+        //    return services;
+        //}
 
         public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
@@ -402,17 +403,17 @@ namespace iPAS.Services.Registration.API
 
             var identityUrl = configuration.GetValue<string>("IdentityUrl");
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
 
-            }).AddJwtBearer(options =>
-            {
-                options.Authority = identityUrl;
-                options.RequireHttpsMetadata = false;
-                options.Audience = "orders";
-            });
+            //}).AddJwtBearer(options =>
+            //{
+            //    options.Authority = identityUrl;
+            //    options.RequireHttpsMetadata = false;
+            //    options.Audience = "orders";
+            //});
 
             return services;
         }

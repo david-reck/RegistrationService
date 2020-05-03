@@ -3,10 +3,7 @@ using System.Reflection;
 using Autofac;
 using FluentValidation;
 using MediatR;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
-using Ordering.API.Application.Behaviors;
-using Ordering.API.Application.DomainEventHandlers.OrderStartedEvent;
-using Ordering.API.Application.Validations;
+
 
 namespace iPAS.Services.Registration.API.Infrastructure.AutofacModules
 {

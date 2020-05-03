@@ -1,10 +1,10 @@
 ﻿using Autofac;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
-using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Queries;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Idempotency;
-using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Repositories;
+//using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Commands;
+//using Microsoft.eShopOnContainers.Services.Ordering.API.Application.Queries;
+//using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.BuyerAggregate;
+//using Microsoft.eShopOnContainers.Services.Ordering.Domain.AggregatesModel.OrderAggregate;
+//using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Idempotency;
+//using Microsoft.eShopOnContainers.Services.Ordering.Infrastructure.Repositories;
 using System.Reflection;
 
 namespace iPAS.Services.Registration.API.Infrastructure.AutofacModules
